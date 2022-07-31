@@ -1,4 +1,5 @@
 use crate::http::Request;
+use std::convert::{TryFrom, TryInto};
 use std::io::Read;
 use std::net::TcpListener;
 
@@ -23,6 +24,11 @@ impl Server {
                     match stream.read(&mut buffer) {
                         Ok(n) => {
                             println!("Received a request: {}", String::from_utf8_lossy(&buffer));
+
+                            match Request::try_from(&buffer[..]) {
+                                Ok(req) => {}
+                                Err(e) => println!("Failed to read request: {}", e),
+                            }
                         }
                         Err(e) => println!("Failed to establish a connection to the server: {}", e),
                     }
