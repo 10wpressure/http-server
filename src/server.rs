@@ -1,3 +1,5 @@
+use crate::http::Request;
+use std::io::Read;
 use std::net::TcpListener;
 
 pub struct Server {
@@ -16,16 +18,17 @@ impl Server {
 
         loop {
             match listener.accept() {
-                Ok((stream, _)) => {}
+                Ok((mut stream, _)) => {
+                    let mut buffer = [0; 1024];
+                    match stream.read(&mut buffer) {
+                        Ok(n) => {
+                            println!("Received a request: {}", String::from_utf8_lossy(&buffer));
+                        }
+                        Err(e) => println!("Failed to establish a connection to the server: {}", e),
+                    }
+                }
                 Err(e) => println!("Failed to establish a new connection: {}", e),
             }
-
-            let res = listener.accept();
-
-            if res.is_err() {
-                continue;
-            }
-            let (stream, addr) = res.unwrap();
         }
     }
 }
