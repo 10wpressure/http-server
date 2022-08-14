@@ -1,5 +1,4 @@
 use std::collections::HashMap;
-use std::io::BufRead;
 
 #[derive(Debug)]
 pub struct QueryString<'buf> {
@@ -13,7 +12,7 @@ pub enum Value<'buf> {
 }
 
 impl<'buf> QueryString<'buf> {
-    pub async fn get(&self, key: &str) -> Option<&Value> {
+    pub fn get(&self, key: &str) -> Option<&Value> {
         self.data.get(key)
     }
 }
@@ -23,7 +22,7 @@ impl<'buf> From<&'buf str> for QueryString<'buf> {
     fn from(s: &'buf str) -> Self {
         let mut data = HashMap::new();
 
-        for sub_str in s.split("&") {
+        for sub_str in s.split('&') {
             let mut key = sub_str;
             let mut val = "";
             if let Some(i) = sub_str.find('=') {
